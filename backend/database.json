@@ -1,0 +1,48 @@
+{
+  "users": [
+    {
+      "_id": "1777478569324",
+      "username": "testuser",
+      "email": "test@example.com",
+      "password": "$2a$10$wRfROFINhLZwe47l1qseUu6HRo0lhMPIkADYiDN/emUEi5.amm6CK",
+      "avatar": "",
+      "isOnline": true,
+      "lastSeen": "2026-04-29T16:06:13.190Z",
+      "contacts": [],
+      "createdAt": "2026-04-29T16:02:49.325Z",
+      "updatedAt": "2026-04-29T16:06:13.190Z"
+    },
+    {
+      "_id": "1777478773203",
+      "username": "testuser2",
+      "email": "test2@example.com",
+      "password": "$2a$10$3CPVT92fpgr0MLBD43M2xe2mHWmNpIBt1trvUVEcVDh4m8m7f8CQ.",
+      "avatar": "",
+      "isOnline": false,
+      "lastSeen": "2026-04-29T16:06:13.205Z",
+      "contacts": [],
+      "createdAt": "2026-04-29T16:06:13.205Z",
+      "updatedAt": "2026-04-29T16:06:13.280Z"
+    }
+  ],
+  "messages": [
+    {
+      "_id": "1777478773287",
+      "senderId": "1777478569324",
+      "receiverId": "1777478773203",
+      "content": "Hello! This is a test message.",
+      "messageType": "text",
+      "timestamp": "2026-04-29T16:06:13.287Z",
+      "isRead": false,
+      "readAt": null,
+      "delivered": true,
+      "deliveredAt": "2026-04-29T16:06:13.287Z",
+      "edited": false,
+      "editedAt": null,
+      "deleted": false,
+      "deletedAt": null,
+      "replyTo": null,
+      "reactions": []
+    }
+  ]
+}
