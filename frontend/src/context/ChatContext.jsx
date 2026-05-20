@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useCallback } from 'react';
 import axios from 'axios';
 import { useSocket } from './SocketContext';
+import { toApiUrl } from '../config/env';
 
 const ChatContext = createContext();
 
@@ -174,7 +175,7 @@ export const ChatProvider = ({ children }) => {
   const getConversations = useCallback(async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await axios.get('http://localhost:4001/api/chat/conversations');
+      const response = await axios.get(toApiUrl('/api/chat/conversations'));
       dispatch({ type: 'SET_CONVERSATIONS', payload: response.data.conversations });
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to load conversations';
@@ -185,7 +186,7 @@ export const ChatProvider = ({ children }) => {
   const getChatHistory = async (userId) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await axios.get(`http://localhost:4001/api/chat/history/${userId}`);
+      const response = await axios.get(toApiUrl(`/api/chat/history/${userId}`));
       dispatch({ type: 'SET_MESSAGES', payload: response.data.messages });
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to load chat history';
@@ -197,7 +198,7 @@ export const ChatProvider = ({ children }) => {
     try {
       const { messageType = 'text', attachment } = options;
       
-      const response = await axios.post('http://localhost:4001/api/chat/send', {
+      const response = await axios.post(toApiUrl('/api/chat/send'), {
         receiverId,
         content,
         messageType,
@@ -228,7 +229,7 @@ export const ChatProvider = ({ children }) => {
 
   const searchUsers = async (query) => {
     try {
-      const response = await axios.get(`http://localhost:4001/api/chat/search?query=${query}`);
+      const response = await axios.get(toApiUrl(`/api/chat/search?query=${query}`));
       return response.data.users;
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to search users';
@@ -239,7 +240,7 @@ export const ChatProvider = ({ children }) => {
 
   const getOnlineUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:4001/api/chat/online-users');
+      const response = await axios.get(toApiUrl('/api/chat/online-users'));
       dispatch({ type: 'SET_ONLINE_USERS', payload: response.data.users });
       return response.data.users;
     } catch (error) {
@@ -268,7 +269,7 @@ export const ChatProvider = ({ children }) => {
 
   const clearChat = async (userId) => {
     try {
-      const response = await axios.delete(`http://localhost:4001/api/chat/clear/${userId}`);
+      const response = await axios.delete(toApiUrl(`/api/chat/clear/${userId}`));
       if (response.data.success) {
         // Clear messages from current chat if it's the same user
         dispatch({ type: 'SET_MESSAGES', payload: [] });
@@ -285,7 +286,7 @@ export const ChatProvider = ({ children }) => {
 
   const blockUser = async (userId) => {
     try {
-      const response = await axios.post(`http://localhost:4001/api/chat/block/${userId}`);
+      const response = await axios.post(toApiUrl(`/api/chat/block/${userId}`));
       if (response.data.success) {
         // Update conversations list to remove blocked user
         getConversations();
@@ -304,7 +305,7 @@ export const ChatProvider = ({ children }) => {
 
   const unblockUser = async (userId) => {
     try {
-      const response = await axios.delete(`http://localhost:4001/api/chat/unblock/${userId}`);
+      const response = await axios.delete(toApiUrl(`/api/chat/unblock/${userId}`));
       if (response.data.success) {
         // Update conversations list
         getConversations();
@@ -319,7 +320,7 @@ export const ChatProvider = ({ children }) => {
 
   const getBlockedUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:4001/api/chat/blocked-users');
+      const response = await axios.get(toApiUrl('/api/chat/blocked-users'));
       return response.data.blockedUsers;
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to get blocked users';

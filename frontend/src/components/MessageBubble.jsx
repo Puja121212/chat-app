@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FiMapPin, FiMoreVertical, FiMic, FiPlay, FiSmile } from 'react-icons/fi';
+import { toApiUrl, toAssetUrl } from '../config/env';
 
 const MessageBubble = ({ message, isOwn }) => {
   const [showMessageOptions, setShowMessageOptions] = useState(false);
@@ -64,7 +65,7 @@ const MessageBubble = ({ message, isOwn }) => {
 
   const playVoiceMessage = () => {
     if (message.attachment && message.attachment.audio) {
-      const audio = new Audio(`http://localhost:4001${message.attachment.audio}`);
+      const audio = new Audio(toAssetUrl(message.attachment.audio));
       audio.play().catch(error => {
         console.error('Error playing voice message:', error);
       });
@@ -81,7 +82,7 @@ const MessageBubble = ({ message, isOwn }) => {
   const handleReaction = async (emoji) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4001/api/reactions/add', {
+      const response = await fetch(toApiUrl('/api/reactions/add'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

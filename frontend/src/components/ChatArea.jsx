@@ -10,6 +10,7 @@ import TypingIndicator from './TypingIndicator';
 import AISuggestions from './AISuggestions';
 import SearchMessages from './SearchMessages';
 import VideoCall from './VideoCall';
+import { toApiUrl } from '../config/env';
 
 const ChatArea = ({ currentChat, user, onBack }) => {
   const [message, setMessage] = useState('');
@@ -244,7 +245,7 @@ const ChatArea = ({ currentChat, user, onBack }) => {
         console.log('Sending FormData with audio file');
         
         // Send as FormData instead of base64
-        const response = await fetch('http://localhost:4001/api/chat/send-voice', {
+        const response = await fetch(toApiUrl('/api/chat/send-voice'), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`

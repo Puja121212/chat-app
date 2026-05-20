@@ -10,17 +10,21 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = (process.env.CLIENT_ORIGINS || 'http://localhost:5173,http://localhost:5174')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
 
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: allowedOrigins,
     methods: ["GET", "POST"]
   }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 // Serve static files for voice messages

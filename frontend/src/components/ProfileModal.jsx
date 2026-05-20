@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FiX, FiCamera, FiEdit2, FiUser, FiMail, FiClock } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { toApiUrl, toAssetUrl } from '../config/env';
 
 const ProfileModal = ({ isOpen, onClose, userId }) => {
   const { user: currentUser } = useAuth();
@@ -24,7 +25,7 @@ const ProfileModal = ({ isOpen, onClose, userId }) => {
       const targetUserId = userId || currentUser?._id;
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`http://localhost:4001/api/users/profile/${targetUserId}`, {
+      const response = await fetch(toApiUrl(`/api/users/profile/${targetUserId}`), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -62,7 +63,7 @@ const ProfileModal = ({ isOpen, onClose, userId }) => {
       const token = localStorage.getItem('token');
       
       // Update profile data
-      await fetch('http://localhost:4001/api/users/profile', {
+      await fetch(toApiUrl('/api/users/profile'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ const ProfileModal = ({ isOpen, onClose, userId }) => {
         const formData = new FormData();
         formData.append('avatar', avatarFile);
         
-        await fetch('http://localhost:4001/api/users/avatar', {
+        await fetch(toApiUrl('/api/users/avatar'), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -99,7 +100,7 @@ const ProfileModal = ({ isOpen, onClose, userId }) => {
     try {
       const token = localStorage.getItem('token');
       
-      await fetch('http://localhost:4001/api/users/status', {
+      await fetch(toApiUrl('/api/users/status'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +164,7 @@ const ProfileModal = ({ isOpen, onClose, userId }) => {
               <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
                 {profile.avatar ? (
                   <img
-                    src={`http://localhost:4001${profile.avatar}`}
+                    src={toAssetUrl(profile.avatar)}
                     alt={profile.username}
                     className="w-full h-full object-cover"
                   />

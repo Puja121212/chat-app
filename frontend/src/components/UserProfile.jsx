@@ -6,6 +6,7 @@ import SettingsModal from './modals/SettingsModal';
 import NotificationsModal from './modals/NotificationsModal';
 import PrivacyModal from './modals/PrivacyModal';
 import HelpModal from './modals/HelpModal';
+import { toApiUrl } from '../config/env';
 
 const UserProfile = ({ user, onClose }) => {
   const { updateProfile } = useAuth();
@@ -32,7 +33,7 @@ const UserProfile = ({ user, onClose }) => {
 
     try {
       setUploading(true);
-      const response = await axios.post('http://localhost:4001/api/upload/profile-image', formData, {
+      const response = await axios.post(toApiUrl('/api/upload/profile-image'), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -59,7 +60,7 @@ const UserProfile = ({ user, onClose }) => {
 
     try {
       setUploading(true);
-      const response = await axios.delete('http://localhost:4001/api/upload/profile-image', {
+      const response = await axios.delete(toApiUrl('/api/upload/profile-image'), {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

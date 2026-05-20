@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FiZap, FiRefreshCw } from 'react-icons/fi';
 import axios from 'axios';
+import { toApiUrl } from '../config/env';
 
 const AISuggestions = ({ 
   currentMessage, 
@@ -21,7 +22,7 @@ const AISuggestions = ({
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:4001/api/ai/smart-replies', {
+      const response = await axios.post(toApiUrl('/api/ai/smart-replies'), {
         currentMessage,
         chatHistory,
         context
@@ -55,7 +56,7 @@ const AISuggestions = ({
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:4001/api/ai/auto-complete', {
+      const response = await axios.post(toApiUrl('/api/ai/auto-complete'), {
         partialMessage: currentMessage,
         context
       }, {
