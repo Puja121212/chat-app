@@ -10,7 +10,6 @@ import TypingIndicator from './TypingIndicator';
 import AISuggestions from './AISuggestions';
 import SearchMessages from './SearchMessages';
 import VideoCall from './VideoCall';
-import { toApiUrl } from '../config/env';
 
 const ChatArea = ({ currentChat, user, onBack }) => {
   const [message, setMessage] = useState('');
@@ -245,7 +244,7 @@ const ChatArea = ({ currentChat, user, onBack }) => {
         console.log('Sending FormData with audio file');
         
         // Send as FormData instead of base64
-        const response = await fetch(toApiUrl('/api/chat/send-voice'), {
+        const response = await fetch('http://localhost:4001/api/chat/send-voice', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -674,18 +673,6 @@ const ChatArea = ({ currentChat, user, onBack }) => {
             title="Search messages"
           >
             <FiSearch className="w-5 h-5 text-black" />
-          </button>
-          
-          <button
-            onClick={toggleTheme}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition"
-            title="Toggle theme"
-          >
-            {isDarkMode ? (
-              <FiSun className="w-5 h-5 text-yellow-500" />
-            ) : (
-              <FiMoon className="w-5 h-5 text-gray-700" />
-            )}
           </button>
           
           <button
