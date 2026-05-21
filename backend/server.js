@@ -11,60 +11,98 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-const normalizeOrigin = (o) => (o || '').trim().replace(/\/$/, '');
+// ======================
+// CORS SETUP
+// ======================
 
-const allowedOrigins = (process.env.CLIENT_ORIGINS || 'http://localhost:5173,http://localhost:5174')
+const normalizeOrigin = (origin) =>
+  (origin || '').trim().replace(/\/$/, '');
+
+const allowedOrigins = (
+  process.env.CLIENT_ORIGINS ||
+  'http://localhost:5173,http://localhost:5174'
+)
   .split(',')
-  .map((o) => normalizeOrigin(o))
+  .map((origin) => normalizeOrigin(origin))
   .filter(Boolean);
 
 const isOriginAllowed = (origin) => {
-  if (!origin) return true; // same-origin / curl / mobile apps (no Origin header)
-  const n = normalizeOrigin(origin);
-  return allowedOrigins.includes(n);
+  if (!origin) return true;
+
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  return allowedOrigins.includes(normalizedOrigin);
 };
+
+console.log('✅ Allowed CORS Origins:', allowedOrigins);
 
 const corsOptions = {
   origin: (origin, callback) => {
-    callback(null, isOriginAllowed(origin));
+    if (isOriginAllowed(origin)) {
+      callback(null, true);
+    } else {
+      console.log('❌ Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
   },
+
   credentials: true,
+
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 204,
+
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With'
+  ],
+
+  optionsSuccessStatus: 204
 };
 
-console.log('CORS allowed origins:', allowedOrigins.length ? allowedOrigins : '(none — check CLIENT_ORIGINS on Render)');
+// ======================
+// MIDDLEWARE
+// ======================
 
-// Socket.IO setup (array origins — add your Vercel URL to CLIENT_ORIGINS on Render)
+app.use(cors(corsOptions));
+
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+
+// Static folder for uploads
+app.use('/uploads', express.static('uploads'));
+
+// ======================
+// SOCKET.IO
+// ======================
+
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
     methods: ['GET', 'POST'],
-    credentials: true,
-  },
+    credentials: true
+  }
 });
 
-// Middleware — must run before routes so OPTIONS preflight gets valid headers
-app.use(cors(corsOptions));
-app.use(express.json());
+// ======================
+// DATABASE CONNECTION
+// ======================
 
-// Serve static files for voice messages
-app.use('/uploads', express.static('uploads'));
-
-// Database connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('Connected to MongoDB Atlas'))
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('✅ Connected to MongoDB Atlas');
+  })
   .catch((err) => {
-    console.error('MongoDB connection error:', err);
-    console.log('Please check your MongoDB Atlas connection string');
+    console.error('❌ MongoDB connection error:', err);
+
     process.exit(1);
   });
 
-// Import routes
+// ======================
+// ROUTES IMPORT
+// ======================
+
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
 const uploadRoutes = require('./routes/upload');
@@ -73,12 +111,21 @@ const userRoutes = require('./routes/users');
 const messageRoutes = require('./routes/messages');
 const aiRoutes = require('./routes/ai');
 
-// Basic route for testing
+// ======================
+// TEST ROUTE
+// ======================
+
 app.get('/', (req, res) => {
-  res.json({ message: 'Chat App Server is running!' });
+  res.json({
+    success: true,
+    message: '🚀 Chat App Server is running!'
+  });
 });
 
-// Routes
+// ======================
+// API ROUTES
+// ======================
+
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/upload', uploadRoutes);
@@ -87,13 +134,20 @@ app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/ai', aiRoutes);
 
-// Socket.IO handlers
+// ======================
+// SOCKET HANDLERS
+// ======================
+
 const { handleConnection } = require('./sockets/socketHandlers');
 
-// Initialize Socket.IO handlers
 handleConnection(io);
 
+// ======================
+// SERVER START
+// ======================
+
 const PORT = process.env.PORT || 4001;
+
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

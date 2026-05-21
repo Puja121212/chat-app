@@ -52,7 +52,7 @@ const getSmartReplies = async (req, res) => {
     }
 
     // Check if API key is valid
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_CORRECT_VALID_API_KEY' || process.env.GEMINI_API_KEY === 'AIzaSyD-tOwEzi9qCEUXT7S-jBF601kkawO7IX8') {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_CORRECT_VALID_API_KEY' || process.env.GEMINI_API_KEY ) {
       // Return fallback suggestions when API key is invalid
       const fallbackSuggestions = getFallbackSuggestions(currentMessage);
       return res.json({
