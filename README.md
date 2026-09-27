@@ -84,6 +84,16 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
+## Production Deployment
+
+For separate frontend and backend hosts, configure these in the hosting dashboards before building/deploying:
+
+- Frontend: `VITE_API_BASE_URL` and `VITE_SOCKET_URL` should both point to the deployed backend origin, with no trailing slash.
+- Backend: `CLIENT_ORIGINS` must include the exact deployed frontend origin (for example, `https://your-app.vercel.app`).
+- Backend: set `MONGODB_URI`, `JWT_SECRET`, and the three `CLOUDINARY_*` variables. Voice recordings and profile images use Cloudinary so they persist across server restarts and redeployments.
+
+The frontend uses `http://localhost:4001` only during local development. Production builds fall back to their own origin if `VITE_API_BASE_URL` is omitted, which is suitable only when the API shares that origin.
+
 ## Local Setup
 
 ### 1) Install backend dependencies
@@ -148,9 +158,8 @@ Base URL: `http://localhost:4001`
 
 ## Important Notes
 
-- Frontend API URLs are currently hardcoded to `http://localhost:4001` in multiple files.
-- If you deploy backend elsewhere, update frontend API/socket URLs accordingly.
-- `backend/uploads/` stores runtime uploaded files (voice/avatar local paths where used).
+- Set frontend API/socket URLs and backend CORS origins to match the deployed domains.
+- Keep voice and avatar media in Cloudinary; local server disks may be temporary on hosting platforms.
 
 ## Security
 

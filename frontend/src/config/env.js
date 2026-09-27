@@ -1,8 +1,12 @@
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001';
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+export const API_BASE_URL = (
+  configuredApiBaseUrl ||
+  (import.meta.env.DEV ? 'http://localhost:4001' : window.location.origin)
+).replace(/\/+$/, '');
 
 export const SOCKET_URL =
-  import.meta.env.VITE_SOCKET_URL || API_BASE_URL;
+  import.meta.env.VITE_SOCKET_URL?.trim().replace(/\/+$/, '') || API_BASE_URL;
 
 export const toApiUrl = (path) => `${API_BASE_URL}${path}`;
 

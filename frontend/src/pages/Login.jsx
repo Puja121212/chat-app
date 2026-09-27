@@ -23,84 +23,79 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await login(formData.email, formData.password);
-    } catch (error) {
-      // Error is handled by AuthContext
-    }
+       try {
+         await login(formData.email, formData.password);
+       } catch {
+         // Error is handled by AuthContext
+       }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Welcome Back</h1>
-          <p className="text-gray-600 dark:text-gray-400">Sign in to your account</p>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6">
-            {error}
+    <main className="auth-screen">
+      <section className="auth-layout">
+        <aside className="auth-aside">
+          <Link className="auth-brand" to="/login" aria-label="CHAT App home">
+            <span className="auth-brand-mark" aria-hidden="true">c</span>
+            <span>CHAT APP</span>
+          </Link>
+          <div className="auth-aside-copy">
+            <p className="auth-eyebrow">YOUR SPACE TO TALK</p>
+            <h2>Good conversations, without the noise.</h2>
+            <p>Pick up where you left off and stay close to the people who matter.</p>
           </div>
-        )}
+          <p className="auth-aside-footer"><span aria-hidden="true" /> PRIVATE / REAL-TIME</p>
+        </aside>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              autoComplete="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
+        <div className="auth-panel">
+          <header className="auth-heading">
+            <p className="auth-eyebrow">WELCOME BACK</p>
+            <h1>Sign in</h1>
+            <p>Enter your details to continue to your chats.</p>
+          </header>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              autoComplete="current-password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+          {error && <div className="auth-alert" role="alert">{error}</div>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field">
+              <label htmlFor="email">Email address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                required
+              />
+            </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
-            <Link
-              to="/register"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-            >
-              Sign up
-            </Link>
+            <div className="auth-field">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autoComplete="current-password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+
+            <button type="submit" disabled={loading} className="auth-submit">
+                 {loading ? 'Signing in...' : 'Sign in'}
+                 <span aria-hidden="true">-&gt;</span>
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            New to CHAT APP? <Link to="/register">Create an account <span aria-hidden="true">-&gt;</span></Link>
           </p>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

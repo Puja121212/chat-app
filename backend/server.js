@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const http = require('http');
+const path = require('path');
 const { Server } = require('socket.io');
 
 // Load environment variables
@@ -70,7 +71,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static folder for uploads
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ======================
 // SOCKET.IO
@@ -110,6 +111,7 @@ const reactionRoutes = require('./routes/reactions');
 const userRoutes = require('./routes/users');
 const messageRoutes = require('./routes/messages');
 const aiRoutes = require('./routes/ai');
+const voiceUploadRoutes = require('./routes/voiceUpload');
 
 // ======================
 // TEST ROUTE
@@ -133,6 +135,7 @@ app.use('/api/reactions', reactionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/chat', voiceUploadRoutes);
 
 // ======================
 // SOCKET HANDLERS

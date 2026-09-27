@@ -32,122 +32,117 @@ const Register = () => {
 
     try {
       await register(formData.username, formData.email, formData.password);
-    } catch (error) {
+    } catch {
       // Error is handled by AuthContext
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Create Account</h1>
-          <p className="text-gray-600 dark:text-gray-400">Join our chat community</p>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6">
-            {error}
+    <main className="auth-screen">
+      <section className="auth-layout">
+        <aside className="auth-aside">
+          <Link className="auth-brand" to="/register" aria-label="CHAT App home">
+            <span className="auth-brand-mark" aria-hidden="true">c</span>
+            <span>CHAT APP</span>
+          </Link>
+          <div className="auth-aside-copy">
+            <p className="auth-eyebrow">A LITTLE CLOSER</p>
+            <h2>Make room for better conversations.</h2>
+            <p>Bring your people together in one calm, private space.</p>
           </div>
-        )}
+          <p className="auth-aside-footer"><span aria-hidden="true" /> PRIVATE / REAL-TIME</p>
+        </aside>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              autoComplete="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Choose a username"
-              required
-              minLength="3"
-            />
-          </div>
+        <div className="auth-panel">
+          <header className="auth-heading">
+            <p className="auth-eyebrow">GET STARTED</p>
+            <h1>Create your account</h1>
+               <p>A few details and you're ready to chat.</p>
+          </header>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              autoComplete="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
+          {error && <div className="auth-alert" role="alert">{error}</div>}
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              autoComplete="new-password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Create a password"
-              required
-              minLength="6"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field">
+              <label htmlFor="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                autoComplete="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Choose a username"
+                required
+                minLength="3"
+                maxLength="30"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              autoComplete="new-password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Confirm your password"
-              required
-              minLength="6"
-            />
-            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-              <p className="text-red-500 dark:text-red-400 text-sm mt-1">Passwords do not match</p>
-            )}
-          </div>
+            <div className="auth-field">
+              <label htmlFor="email">Email address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                required
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading || formData.password !== formData.confirmPassword}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Creating Account...' : 'Sign Up'}
-          </button>
-        </form>
+            <div className="auth-field">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autoComplete="new-password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="At least 6 characters"
+                required
+                minLength="6"
+              />
+            </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 dark:text-gray-400">
-            Already have an account?{' '}
-            <Link
-              to="/login"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+            <div className="auth-field">
+              <label htmlFor="confirmPassword">Confirm password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                autoComplete="new-password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Enter your password again"
+                required
+                minLength="6"
+                aria-invalid={Boolean(formData.confirmPassword && formData.password !== formData.confirmPassword)}
+              />
+              {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                <p className="auth-field-error">Passwords do not match.</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || formData.password !== formData.confirmPassword}
+              className="auth-submit"
             >
-              Sign in
-            </Link>
+                 {loading ? 'Creating account...' : 'Create account'}
+                 <span aria-hidden="true">-&gt;</span>
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            Already have an account? <Link to="/login">Sign in <span aria-hidden="true">-&gt;</span></Link>
           </p>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

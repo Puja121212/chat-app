@@ -69,14 +69,17 @@ const handleConnection = (io) => {
 
     // Handle sending messages
     socket.on('send_message', (data) => {
-      const { roomId, message, receiverId } = data;
+      const { roomId, message, receiverId, messageType = 'text', attachment, messageId } = data;
       
       // Save message to database (will be implemented in next step)
       const messageData = {
-        id: Date.now().toString(),
+        _id: messageId || Date.now().toString(),
         senderId: socket.user._id,
         senderName: socket.user.username,
         message: message,
+        content: message,
+        messageType,
+        attachment,
         timestamp: new Date(),
         roomId: roomId,
         receiverId: receiverId

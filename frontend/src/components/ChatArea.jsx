@@ -10,6 +10,7 @@ import TypingIndicator from './TypingIndicator';
 import AISuggestions from './AISuggestions';
 import SearchMessages from './SearchMessages';
 import VideoCall from './VideoCall';
+import { toApiUrl } from '../config/env';
 
 const ChatArea = ({ currentChat, user, onBack }) => {
   const [message, setMessage] = useState('');
@@ -154,9 +155,16 @@ const ChatArea = ({ currentChat, user, onBack }) => {
         } 
       });
       
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
+      const supportedMimeTypes = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/ogg;codecs=opus',
+        'audio/mp4'
+      ];
+      const mimeType = supportedMimeTypes.find(type => MediaRecorder.isTypeSupported?.(type));
+      const mediaRecorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
       const chunks = [];
 
       mediaRecorder.ondataavailable = (event) => {
@@ -166,7 +174,7 @@ const ChatArea = ({ currentChat, user, onBack }) => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || chunks[0]?.type || 'audio/webm' });
         setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
       };
@@ -221,30 +229,27 @@ const ChatArea = ({ currentChat, user, onBack }) => {
   const sendVoiceMessage = async () => {
     if (audioBlob && currentChat) {
       try {
+        if (audioBlob.size > 10 * 1024 * 1024) {
+          alert('This recording is larger than the 10 MB upload limit. Please record a shorter message.');
+          return;
+        }
+
         console.log('Sending voice message to:', currentChat._id);
         console.log('Audio blob size:', audioBlob.size);
         console.log('Recording duration:', recordingTime);
-        
-        // Compress audio blob if it's too large
-        let compressedBlob = audioBlob;
-        if (audioBlob.size > 5 * 1024 * 1024) { // 5MB limit
-          console.log('Compressing audio blob from', audioBlob.size);
-          // Create a new blob with lower quality
-          compressedBlob = audioBlob.slice(0, Math.min(audioBlob.size, 2 * 1024 * 1024), 'audio/webm');
-          console.log('Compressed to', compressedBlob.size);
-        }
-        
-        // Create FormData for file upload
+
+        const audioExtension = audioBlob.type.includes('ogg')
+          ? 'ogg'
+          : audioBlob.type.includes('mp4') ? 'm4a' : 'webm';
         const formData = new FormData();
-        formData.append('audio', compressedBlob, `voice_${Date.now()}.webm`);
+        formData.append('audio', audioBlob, `voice_${Date.now()}.${audioExtension}`);
         formData.append('receiverId', currentChat._id);
         formData.append('messageType', 'voice');
         formData.append('duration', recordingTime.toString());
         
         console.log('Sending FormData with audio file');
         
-        // Send as FormData instead of base64
-        const response = await fetch('http://localhost:4001/api/chat/send-voice', {
+        const response = await fetch(toApiUrl('/api/chat/send-voice'), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -549,11 +554,6 @@ const ChatArea = ({ currentChat, user, onBack }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on('receive_message', (newMessage) => {
-        dispatch({ type: 'ADD_MESSAGE', payload: newMessage });
-        dispatch({ type: 'UPDATE_CONVERSATION_IF_CURRENT', payload: newMessage });
-      });
-
       socket.on('user_typing', (data) => {
         dispatch({ type: 'ADD_TYPING_USER', payload: data });
 
@@ -588,7 +588,6 @@ const ChatArea = ({ currentChat, user, onBack }) => {
       });
 
       return () => {
-        socket.off('receive_message');
         socket.off('user_typing');
         socket.off('online_users_list');
         socket.off('message_read_receipt');

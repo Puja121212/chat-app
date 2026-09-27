@@ -4,6 +4,14 @@ import { API_BASE_URL } from '../config/env';
 
 const AuthContext = createContext();
 
+const getAuthErrorMessage = (error, action) => {
+  if (error.response?.data?.message) return error.response.data.message;
+  if (!error.response) {
+    return 'Cannot reach the server. Check the API URL and backend deployment settings.';
+  }
+  return `${action} failed. Please try again.`;
+};
+
 const authReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN_SUCCESS':
@@ -103,6 +111,8 @@ export const AuthProvider = ({ children }) => {
         password
       });
 
+      localStorage.setItem('token', response.data.token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: response.data
@@ -110,7 +120,7 @@ export const AuthProvider = ({ children }) => {
 
       return response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      const errorMessage = getAuthErrorMessage(error, 'Login');
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       throw error;
     }
@@ -120,11 +130,13 @@ export const AuthProvider = ({ children }) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       const response = await axios.post(`${API_BASE_URL}/api/auth/register`, {
-        username,
+        username: username.trim(),
         email: email.trim().toLowerCase(),
         password
       });
 
+      localStorage.setItem('token', response.data.token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: response.data
@@ -132,7 +144,7 @@ export const AuthProvider = ({ children }) => {
 
       return response.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
+      const errorMessage = getAuthErrorMessage(error, 'Registration');
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       throw error;
     }
